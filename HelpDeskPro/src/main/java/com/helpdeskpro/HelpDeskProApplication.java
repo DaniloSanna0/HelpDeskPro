@@ -1,4 +1,4 @@
-package HelpDeskPro;
+package com.helpdeskpro;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
