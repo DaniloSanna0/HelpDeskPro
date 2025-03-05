@@ -1,5 +1,20 @@
 package com.helpdeskpro.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.helpdeskpro.model.Ticket;
 import com.helpdeskpro.model.TicketStatus;
 import com.helpdeskpro.model.User;
@@ -7,13 +22,6 @@ import com.helpdeskpro.repository.TicketRepository;
 import com.helpdeskpro.repository.UserRepository;
 
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -27,52 +35,45 @@ public class TicketController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket) {
+    private User getAuthenticatedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
-        
+
         if (principal instanceof UserDetails) {
             username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }
 
-        User user = userRepository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+    }
 
+    @PostMapping
+    public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket) {
+        User user = getAuthenticatedUser();
         ticket.setUser(user);
         ticket.setStatus(TicketStatus.OPEN);
         ticket.setCreatedAt(LocalDateTime.now());  
         ticketRepository.save(ticket);
-
         return ResponseEntity.ok(ticket);
     }
 
     @GetMapping
-    public ResponseEntity<List<Ticket>> getTickets() {
-        List<Ticket> tickets = ticketRepository.findAll();
+    public ResponseEntity<List<Ticket>> getUserTickets() {
+        User user = getAuthenticatedUser();
+        List<Ticket> tickets = ticketRepository.findByUser(user);
         return ResponseEntity.ok(tickets);
     }
 
-    
-    @GetMapping("/tickets/my")
-    public List<Ticket> getMyTickets() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("🔹 PRINCIPAL in TicketController: " + principal);
-
-        if (principal instanceof User) {
-            User user = (User) principal;
-            return ticketRepository.findByUser(user);
-        } else {
-            throw new RuntimeException("❌ Utente non trovato");
-        }
-    }
-
-
-
-    @GetMapping("/all")
+    @GetMapping("/all") // Se vuoi mantenere un endpoint separato per admin
     public ResponseEntity<List<Ticket>> getAllTickets() {
+        User user = getAuthenticatedUser();
+
+        if (user.getRole().name().equals("ADMIN")) { // Assumendo che il modello User abbia un metodo isAdmin()
+            throw new RuntimeException("Accesso negato");
+        }
+
         List<Ticket> tickets = ticketRepository.findAll();
         return ResponseEntity.ok(tickets);
     }
@@ -80,6 +81,12 @@ public class TicketController {
     @PutMapping("/{id}/status")
     public ResponseEntity<Ticket> updateTicketStatus(@PathVariable Long id, @RequestParam TicketStatus status) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new RuntimeException("Ticket non trovato"));
+
+        User user = getAuthenticatedUser();
+        if (!ticket.getUser().equals(user) && !user.getRole().name().equals("ADMIN")) {
+            throw new RuntimeException("Accesso negato");
+        }
+
         ticket.setStatus(status);
         ticketRepository.save(ticket);
         return ResponseEntity.ok(ticket);
