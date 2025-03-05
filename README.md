@@ -1,23 +1,16 @@
-HelpDeskPro è un sistema di gestione ticket per supporto tecnico e assistenza clienti. Permette agli utenti di creare, gestire e risolvere ticket in modo efficiente, garantendo una comunicazione fluida tra utenti e team di supporto.
+## 🔹 Caratteristiche principali
+- **Autenticazione JWT**: Sistema di login con JSON Web Token e gestione dei ruoli (`USER`, `ADMIN`).
+- **Gestione dei ticket**: CRUD completa sui ticket con associazione ai rispettivi utenti.
+- **Ruoli e permessi**: Gli utenti possono gestire solo i propri ticket, mentre gli admin possono vedere e modificare tutti i ticket.
+- **Database con MySQL**: Persistenza dei dati tramite JPA e Hibernate.
+- **Spring Security**: Protezione delle API e autorizzazione basata sui ruoli.
+- **RESTful API**: Endpoint ben strutturati per l'interazione con il frontend.
 
-Caratteristiche
-Autenticazione JWT con ruoli USER e ADMIN
-Gestione ticket con CRUD completo (Creazione, Lettura, Aggiornamento, Eliminazione)
-Protezione API con Spring Security
-Architettura RESTful per una facile integrazione con frontend o app mobile
-
-Tecnologie Utilizzate
-Back-end: Spring Boot, Spring Security, JPA (Hibernate)
-Database: MySQL
-Autenticazione: JWT (JSON Web Token)
-Strumenti: Postman per testing API, Lombok per ridurre il boilerplate code
-
-API Endpoints
-Autenticazione
-POST /api/auth/register → Registra un nuovo utente
-POST /api/auth/login → Ottiene il token JWT
-Gestione Ticket
-GET /api/tickets → Lista tutti i ticket (richiede autenticazione)
-POST /api/tickets → Crea un nuovo ticket
-PUT /api/tickets/{id} → Aggiorna un ticket
-DELETE /api/tickets/{id} → Elimina un ticket
+## 🎯 Tecnologie utilizzate
+- **Java 23**
+- **Spring Boot 3.4.3**
+- **Spring Security**
+- **Spring Data JPA**
+- **JWT (Json Web Token)**
+- **MySQL 8+**
+- **Maven**
