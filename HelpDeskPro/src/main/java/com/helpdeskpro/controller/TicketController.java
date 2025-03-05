@@ -7,7 +7,6 @@ import com.helpdeskpro.repository.TicketRepository;
 import com.helpdeskpro.repository.UserRepository;
 
 import jakarta.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,8 +29,16 @@ public class TicketController {
 
     @PostMapping
     public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername())
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
         ticket.setUser(user);
@@ -42,24 +49,34 @@ public class TicketController {
         return ResponseEntity.ok(ticket);
     }
 
-    // Ottieni i ticket dell'utente autenticato
     @GetMapping
-    public ResponseEntity<List<Ticket>> getMyTickets() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("Utente non trovato"));
-
-        List<Ticket> tickets = ticketRepository.findByUserId(user.getId());
+    public ResponseEntity<List<Ticket>> getTickets() {
+        List<Ticket> tickets = ticketRepository.findAll();
         return ResponseEntity.ok(tickets);
     }
 
-    // Solo Admin può vedere tutti i ticket
+    
+    @GetMapping("/tickets/my")
+    public List<Ticket> getMyTickets() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("🔹 PRINCIPAL in TicketController: " + principal);
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            return ticketRepository.findByUser(user);
+        } else {
+            throw new RuntimeException("❌ Utente non trovato");
+        }
+    }
+
+
+
     @GetMapping("/all")
     public ResponseEntity<List<Ticket>> getAllTickets() {
         List<Ticket> tickets = ticketRepository.findAll();
         return ResponseEntity.ok(tickets);
     }
 
-    // Modifica lo stato di un ticket (Solo Admin)
     @PutMapping("/{id}/status")
     public ResponseEntity<Ticket> updateTicketStatus(@PathVariable Long id, @RequestParam TicketStatus status) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new RuntimeException("Ticket non trovato"));
