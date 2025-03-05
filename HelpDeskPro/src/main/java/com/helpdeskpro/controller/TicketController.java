@@ -66,11 +66,11 @@ public class TicketController {
         return ResponseEntity.ok(tickets);
     }
 
-    @GetMapping("/all") // Se vuoi mantenere un endpoint separato per admin
+    @GetMapping("/all") 
     public ResponseEntity<List<Ticket>> getAllTickets() {
         User user = getAuthenticatedUser();
 
-        if (user.getRole().name().equals("ADMIN")) { // Assumendo che il modello User abbia un metodo isAdmin()
+        if (user.getRole().name().equals("ADMIN")) { 
             throw new RuntimeException("Accesso negato");
         }
 
