@@ -15,16 +15,17 @@
 - **MySQL 8+**
 - **Maven**
 
-🔄 API REST
-📌 1. Autenticazione
-Metodo	Endpoint	Descrizione
-POST	/auth/login	Login utente
-POST	/auth/register	Registrazione nuovo utente
-📌 2. Ticket
-Metodo	Endpoint	Descrizione
-GET	/api/tickets	Utenti normali: vede solo i propri ticket. Admin: vede tutti i ticket
-POST	/api/tickets	Creazione di un ticket
-PUT	/api/tickets/{id}/status	Aggiornamento stato ticket (solo Admin)
-📌 3. Utenti
-Metodo	Endpoint	Descrizione
-GET	/api/users/me	Ottieni i dati dell'utente autenticato
+## 🔄 1. Autenticazione
+## 📌 Endpoint
+- POST /auth/login → Login utente
+- POST /auth/register → Registrazione nuovo utente
+
+## 🎟️ 2. Ticket
+## 📌 Endpoint
+- GET /api/tickets → Utenti normali: vedono solo i propri ticket. Admin: vede tutti
+- POST /api/tickets → Creazione di un ticket
+- PUT /api/tickets/{id}/status → Aggiornamento stato ticket (solo Admin)
+
+## 👤 3. Utenti
+- 📌 Endpoint
+- GET /api/users/me → Ottieni i dati dell'utente autenticato
