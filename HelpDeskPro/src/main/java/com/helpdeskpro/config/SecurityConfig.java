@@ -30,12 +30,12 @@ public class SecurityConfig {
             .and()
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Permetti login/register
+                .requestMatchers("/api/auth/**").permitAll() 
                 .requestMatchers("/api/tickets/**").hasAnyRole("USER", "ADMIN") // Proteggi tickets
                 .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo ADMIN per /api/admin
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // ⬅️ AGGIUNGE IL JWT FILTER
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); 
 
         return http.build();
     }
