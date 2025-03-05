@@ -31,7 +31,7 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() 
-                .requestMatchers("/api/tickets/**").hasAnyRole("USER", "ADMIN") // Proteggi tickets
+                .requestMatchers("/api/tickets/**").hasAnyRole("USER", "ADMIN") 
                 .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo ADMIN per /api/admin
                 .anyRequest().authenticated()
             )

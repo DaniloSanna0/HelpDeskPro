@@ -21,7 +21,7 @@ public class AuthService {
     public AuthService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
-        this.passwordEncoder = new BCryptPasswordEncoder(); // Iniettalo se vuoi usare @Bean
+        this.passwordEncoder = new BCryptPasswordEncoder(); 
     }
 
     public String register(String username, String password, Role role) {
