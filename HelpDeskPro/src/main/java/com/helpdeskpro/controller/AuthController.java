@@ -22,7 +22,7 @@ public class AuthController {
         try {
             String username = request.get("username");
             String password = request.get("password");
-            String roleString = request.get("role") != null ? request.get("role").toString().toUpperCase() : "USER"; // Converte in maiuscolo per sicurezza
+            String roleString = request.get("role") != null ? request.get("role").toString().toUpperCase() : "USER"; 
 
             Role role = Role.valueOf(roleString); // Converte la stringa in un enum
 

@@ -20,7 +20,6 @@ public class AdminController {
         this.ticketService = ticketService;
     }
 
-    // Recupera tutti i ticket (solo per admin)
     @GetMapping("/tickets")
     public ResponseEntity<List<Ticket>> getAllTickets() {
         return ResponseEntity.ok(ticketService.getAllTickets());
@@ -41,7 +40,6 @@ public class AdminController {
     }
 
 
-    // Elimina un ticket
     @DeleteMapping("/tickets/{id}")
     public ResponseEntity<?> deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);

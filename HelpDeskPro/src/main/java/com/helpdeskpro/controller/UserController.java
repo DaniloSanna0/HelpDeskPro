@@ -18,7 +18,6 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    // Solo gli Admin possono vedere tutti gli utenti
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -26,7 +25,6 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    // Ottieni il proprio profilo
     @GetMapping("/me")
     public ResponseEntity<User> getMyProfile(@RequestParam String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Utente non trovato"));
