@@ -35,24 +35,18 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("❌ Nessun token trovato, richiesta anonima.");
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
-        System.out.println("🔹 Token ricevuto: " + token);
-
         String username = jwtUtil.extractUsername(token);
-        System.out.println("🔹 Username estratto dal token: " + username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("❌ Utente non trovato nel database"));
+                    .orElseThrow(() -> new RuntimeException("Utente non trovato nel database"));
 
             if (jwtUtil.validateToken(token, username)) {
-                System.out.println("✅ Token valido per: " + username);
-
                 List<SimpleGrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())
                 );
@@ -61,18 +55,9 @@ public class JwtFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(user.getUsername(), null, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println("🔹 Autenticazione impostata nel SecurityContextHolder per " + username);
-            } else {
-                System.out.println("❌ Token non valido");
             }
-        } else {
-            System.out.println("❌ Username nullo o autenticazione già presente");
         }
-
-        System.out.println("PRINCIPAL dopo autenticazione: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         filterChain.doFilter(request, response);
     }
-
-
 }
