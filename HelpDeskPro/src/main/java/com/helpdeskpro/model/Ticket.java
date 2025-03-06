@@ -35,7 +35,7 @@ public class Ticket {
     private User user;
 
     @CreationTimestamp
-    @Column(updatable = false) // Evita modifiche accidentali dopo la creazione
+    @Column(updatable = false) 
     private LocalDateTime createdAt;
 
 }
