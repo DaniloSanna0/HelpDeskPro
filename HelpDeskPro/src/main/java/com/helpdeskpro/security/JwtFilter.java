@@ -48,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token, username)) {
                 List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                    new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())
+                    new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
                 );
 
                 UsernamePasswordAuthenticationToken authentication =
